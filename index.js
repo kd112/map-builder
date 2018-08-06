@@ -11,7 +11,7 @@ app.use('/proxy',proxy({
         return ""
     },
     router:(req)=>{
-        console.log(req.query.source)
+        // console.log(req.query.source)
         return decodeURIComponent(req.query.source)
     }
 }))
