@@ -14,6 +14,7 @@ import color from 'ol/color';
 import Overlay from "ol/Overlay";
 let popup = document.getElementById('pop-up')
 let previous_feature = null
+let pop 
 // console.log(document.getElementById('pop-up'))
 
 
@@ -97,6 +98,11 @@ let featureOverlay = new VectorLayer({
     
 map.on('click',(evt)=>{
     evt.map.removeOverlay()
+    if(pop){
+        // console.log("here")
+        pop.setPosition(undefined)
+        // pop=null;
+    }
 let feature = evt.map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
     return feature;
 });
@@ -104,7 +110,7 @@ if (feature){
     let prop = feature.getProperties()
     // console.log(popup)
     popup.innerHTML = `<p>Name:${prop.name_engli}</p>`
-    let pop = new Overlay({
+    pop = new Overlay({
         id:1,
         element:popup,
     })
