@@ -6,6 +6,8 @@ import { View } from 'ol';
 import VectorLayer from 'ol/layer/Vector.js'
 import GeoJSON from 'ol/format/GeoJSON.js'
 import VectorSource from 'ol/source/Vector.js';
+import {vector} from "./_layers";
+import { buildSource} from "./_source"
 import { bbox } from 'ol/loadingstrategy';
 import Style from "ol/style/Style";
 import Fill from "ol/style/Fill";
@@ -17,42 +19,48 @@ let previous_feature = null
 // console.log(document.getElementById('pop-up'))
 
 
-let vectorSource =  new VectorSource({
-    format:new GeoJSON(),
-    loader:(extent, resolution, projection)=>{
-        let proj = projection.getCode();
-        // let url = 'https://ahocevar.com/geoserver/wfs?service=WFS&' +
-        //     'version=1.1.0&request=GetFeature&typename=osm:water_areas&' +
-        //     'outputFormat=application/json&srsname=' + proj + '&' +
-        //     'bbox=' + extent.join(',') + ',' + proj;
-        let bbox = extent.join(",");
-        let url = encodeURIComponent(`http://localhost:8080/geoserver/wfs?request=GetFeature&outputFormat=
-        JSON&version=1.1.0&typeName=India:District&srsname=${proj}&bbox=${bbox},${proj}`);
-        let xhr = new XMLHttpRequest();
-        xhr.open("GET", `/proxy?source=${url}`);
+// let vectorSource =  new VectorSource({
+//     format:new GeoJSON(),
+//     loader:(extent, resolution, projection)=>{
+//         let proj = projection.getCode();
+//         // let url = 'https://ahocevar.com/geoserver/wfs?service=WFS&' +
+//         //     'version=1.1.0&request=GetFeature&typename=osm:water_areas&' +
+//         //     'outputFormat=application/json&srsname=' + proj + '&' +
+//         //     'bbox=' + extent.join(',') + ',' + proj;
+//         let bbox = extent.join(",");
+//         let url = encodeURIComponent(`http://localhost:8080/geoserver/wfs?request=GetFeature&outputFormat=
+//         JSON&version=1.1.0&typeName=India:District&srsname=${proj}&bbox=${bbox},${proj}`);
+//         let xhr = new XMLHttpRequest();
+//         xhr.open("GET", `/proxy?source=${url}`);
         
-        let onError = function() {
-            vectorSource.removeLoadedExtent(extent);
-        };
-        xhr.onerror = onError;
-        xhr.onload = function() {
-            if (xhr.status == 200) {
-                // console.log(xhr.responseText);
-                vectorSource.addFeatures(
-                    vectorSource.getFormat().readFeatures(xhr.responseText)
-                );
-                // vectorSource.forEachFeature((feature)=>{
-                    // // console.log();
-                    // feature.overlay = () => { console.log(xhr.responseText)}
-                    // })
-                } else {
-                    onError();
-                }
-            };
-            xhr.send();
-        },
+//         let onError = function() {
+//             vectorSource.removeLoadedExtent(extent);
+//         };
+//         xhr.onerror = onError;
+//         xhr.onload = function() {
+//             if (xhr.status == 200) {
+//                 // console.log(xhr.responseText);
+//                 vectorSource.addFeatures(
+//                     vectorSource.getFormat().readFeatures(xhr.responseText)
+//                 );
+//                 // vectorSource.forEachFeature((feature)=>{
+//                     // // console.log();
+//                     // feature.overlay = () => { console.log(xhr.responseText)}
+//                     // })
+//                 } else {
+//                     onError();
+//                 }
+//             };
+//             xhr.send();
+//         },
+//         strategy:bbox
+//     })
+
+    let config = {
+        format:'geojson',
+        url: 'http://localhost:8080/geoserver/wfs?request=GetFeature&outputFormat=JSON&version=1.1.0&typeName=India:District',
         strategy:bbox
-    })
+    }
     let map = new maps({
         target: "map-canvas",
         layers:[
@@ -60,7 +68,7 @@ let vectorSource =  new VectorSource({
                 source:new OSM()
             }),
             new VectorLayer({
-                source:vectorSource,
+                source:buildSource(config),
                 style:new Style({
                     fill:new Fill({
                         color:'rgba(255,127,80,0.3)'
