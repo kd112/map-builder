@@ -1,0 +1,12 @@
+{
+  "name": "map-builder",
+  "version": "1.0.0",
+  "description": "An attempt to create a map engine using openlayers",
+  "main": "app.js",
+  "repository": "https://github.com/kd112/map-builder.git",
+  "author": "Rahul <k.dasgupta112@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "ol": "^5.2.0"
+  }
+}
